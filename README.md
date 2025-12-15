@@ -65,7 +65,7 @@ This project implements an unsupervised ensemble machine learning approach for d
 │   ├── experiments.tex
 │   ├── results.tex
 │   ├── conclusion.tex
-│   └── figs/                    # Generated visualizations
+│   └── figs/                    # Generated visualisations
 └── README.md
 ```
 
@@ -84,13 +84,3 @@ The notebook generates four key figures:
 - **Performance Heatmap**: Metrics across all channels
 - **Performance Metrics**: Bar charts comparing precision/recall/F1/FDR
 - **Confusion Matrices**: Grid showing true/false positives/negatives per channel
-
-## References
-
-- Hundman, K., et al. (2018). "Detecting Spacecraft Anomalies Using LSTMs and Nonparametric Dynamic Thresholding" - [SMAP Dataset](https://www.kaggle.com/datasets/patrickfleith/nasa-anomaly-detection-dataset)
-- Dempster, A., et al. (2020). "MINIROCKET: A Very Fast (Almost) Deterministic Transform for Time Series Classification" - [arXiv:2012.08791](https://arxiv.org/abs/2012.08791)
-- Pedregosa, F., et al. (2011). "Scikit-learn: Machine Learning in Python" - sklearn library for ML algorithms
-
-## Academic Paper
-
-Full technical details, methodology, and analysis are available in the LaTeX paper located in `paper/template/`. Compile `main.tex` to generate the PDF.
