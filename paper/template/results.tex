@@ -2,79 +2,62 @@
 \section{Results}
 \label{sec:results}
 
-Present the results of your experiments. Simply presenting the data is
-insufficient! You need to analyze your results. What did you discover?
-What is interesting about your results? Were the results what you
-expected? Use appropriate visualizations. Prefer graphs and charts to
-tables as they are easier to read (though tables are often more
-compact, and can be a better choice if you're squeezed for space).
+% Present the results of your experiments. Simply presenting the data is
+% insufficient! You need to analyze your results. What did you discover?
+% What is interesting about your results? Were the results what you
+% expected? Use appropriate visualizations. Prefer graphs and charts to
+% tables as they are easier to read (though tables are often more
+% compact, and can be a better choice if you're squeezed for space).
 
-\subsection{Embedding Pictures}
-\label{subsec:pics}
+In this section, we discuss the performance of the models on the real, anomalous telemetry data provided. As anomalies are rare, the analysis primarily focuses on recall, F1-score, and precision for anomalous predictions, rather than overall averages, to avoid obscuring the effectiveness of our models in detecting anomalies.
 
-See the source code (\texttt{results.tex}) for instructions on how to
-insert figures (like figure~\ref{fig:tex}) or plots into your
-document.
+\subsection{Best Performing Model}
 
-% Note that TeX has a mind of its own when it comes to placing images
-% in documents - where a figure appears in the PDF document will often
-% be quite different from where it appears in the source code. This is
-% a feature, not a bug - it enables LaTeX to produce layouts that
-% "flow" better. It only takes a few lines to insert a figure into
-% your write-up - I recommend using PNG, JPG or PDF images
-% (incidentally, programs like Excel and Matlab will allow you to save
-% any plots or figures you generate in those formats). The \figure{}
-% command is used to create a new figure.
-\begin{figure}[htb]
+Across all telemetry channels, the Ensemble model outperformed the individual models in terms of recall, achieving a score of $0.552$, though its F1-score of $0.207$ reflects the trade-off with low precision due to the rarity of anomalies. One-Class SVM and Local Outlier Factor showed moderate recall (0.385 and 0.419, respectively), while Isolation Forest had the lowest recall at 0.308. Focusing on recall ensures that anomalies are rarely missed, even if some normal points are incorrectly flagged, which explains the generally low precision values across all models. Table \ref{tab:model-performance-data} summarises the average performance of each unsupervised learning model, averaged across all telemetry channels. Furthermore, Figure 1 shows per-channel performance for each model in terms of recall and F1-score.
 
-  \centering  % centers the image in the column
+\begin{table}[h!]
+\centering
+\caption{Average performance of unsupervised models across all channels. Recall and F1-score focus on anomaly detection performance.}
+\label{tab:model-performance-data}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Model} & \textbf{Recall} & \textbf{F1-score} \\
+\midrule
+One-Class SVM & 0.3845 & 0.2325 \\
+Isolation Forest & 0.3076 & 0.1566 \\
+Local Outlier Factor & 0.4190 & 0.2657 \\
+\textbf{Ensemble} & \textbf{0.5519} & 0.2070 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-  % replace the second argument below with your filename. I like to
-  % place all my figures in a sub-directory to keep things organized
-  \includegraphics[width=0.47\textwidth]{figs/file_extensions.png}
+\subsection{Model Performance Across Telemetry Channels}
+The Ensemble model demonstrates stable performance across channels despite varying anomaly rates. Table \ref{tab:channel-performance-data}  presents per-channel performance for the Ensemble model and Figure 1 shows the specific anomaly-rates per-channel. 
 
-  % *Every* figure should have a descriptive caption.
-  \caption{On the trustworthiness of \LaTeX. Image courtesy of \texttt{xkcd}.}
+Channel D achieves the best overall performance with the highest precision (0.2879) and F1 score (0.3919), whilst maintaining strong recall (0.6135). This channel's higher anomaly density (22.6\%) provides sufficient training signal for the ensemble to learn robust decision boundaries. In contrast, Channel S demonstrates the highest recall (0.8000) despite having a very low anomaly rate (1.5\%), successfully detecting rare anomalies at the cost of precision (0.1307). Channel G shows similar behaviour with recall of 0.7843, further highlighting the model's ability to detect unusual events even in sparse data. 
 
-  % The label is a handle you create so that you can refer to this
-  % figure (using the \ref{} command) from other parts of your
-  % document. LaTeX automatically renumbers figures and updates
-  % references when you recompile, so you should do it this way rather
-  % than hard-coding in references. Notice that I've also been
-  % creating labels for the various sections in the document; I could
-  % use \ref{} command to refer to those sections using their labels
-  % too.
-  \label{fig:tex}
+Notably, two out of ten channels achieve recall above 0.7, whilst no channels exceed 0.5 for either precision or F1 score. This pattern reflects the deliberate prioritisation of recall over precision in threshold selection—missing critical spacecraft anomalies carries far greater operational risk than investigating false alarms. The consistently high False Discovery Rates (FDR) across all channels are an expected consequence of this design choice.
 
-\end{figure}
+Channel A presents the greatest challenge with the lowest recall (0.1331) and F1 score (0.0743), suggesting that its anomaly patterns may differ substantially from the training distribution or that additional feature engineering may be required. Channels with moderate anomaly density (D, E, P, T) generally show balanced performance with recall above 0.5 and F1 scores around 0.2-0.4, demonstrating the model's robustness to varying sample sizes.
 
-\subsection{Creating Tables}
-\label{subsec:tables}
-
-Again, refer to \texttt{results.tex} to learn how to create simple
-tables (like table~\ref{tab:example}).
-\begin{figure}[htb]
-  \centering % centers the entire table
-
-  % The following line sets the parameters of the table: we'll have
-  % three columns (one per 'c'), each
-  % column will be centered (hence the 'c'; 'l' or 'r' will left or
-  % right justify the column) and the columns
-  % will have lines between them (that's the purpose of the |s between
-  % the 'c's).
-  \begin{tabular}{|c|c|c|} 
-    \hline \hline % draws two horizontal lines at the top of the table
-    Column 1 & Column 2 & Column 3 \\ % separate column contents using the &
-    \hline % line after the column headers
-    $1$ & $3.1$ & $2.7$ \\
-    $42$ & $-1$ & $1729$\\
-    \hline \hline
-  \end{tabular}
-
-  % As with figures, *every* table should have a descriptive caption
-  % and a label for ease of reference.
-  \caption{An example table.}
-  \label{tab:example}
-
-\end{figure}
-
+\begin{table}[h!]
+\centering
+\caption{Ensemble model performance per telemetry channel. High FDR indicates low precision, reflecting the focus on recall in anomaly detection.}
+\label{tab:channel-performance-data}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Channel} & \textbf{Precision} & \textbf{Recall} & \textbf{F1 Score} & \textbf{FDR} \\
+\midrule
+A & 0.0515 & 0.1331 & 0.0743 & 0.9485 \\
+B & 0.1034 & 0.5000 & 0.1714 & 0.8966 \\
+D & 0.2879 & 0.6135 & 0.3919 & 0.7121 \\
+E & 0.1251 & 0.5447 & 0.2035 & 0.8749 \\
+F & 0.1368 & 0.4356 & 0.2082 & 0.8632 \\
+G & 0.0327 & 0.7843 & 0.0628 & 0.9673 \\
+P & 0.1979 & 0.5864 & 0.2960 & 0.8021 \\
+R & 0.1200 & 0.4286 & 0.1875 & 0.8800 \\
+S & 0.1307 & 0.8000 & 0.2247 & 0.8693 \\
+T & 0.1521 & 0.6931 & 0.2495 & 0.8479 \\
+\bottomrule
+\end{tabular}
+\end{table}

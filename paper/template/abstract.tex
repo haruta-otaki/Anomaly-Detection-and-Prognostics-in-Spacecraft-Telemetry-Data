@@ -4,16 +4,6 @@
 
 \begin{abstract}
 
-The abstract should be between four and seven sentences long. Introduce the
-problem you are studying. Describe what you did. Summarize your results --- what
-did you discover, what is the main take-away message? Basically, you're trying 
-to sell your paper to the reader, so be brief and to the point. \textbf{Do \emph{not}
-include any citations in the abstract.}
+This paper presents an unsupervised machine learning approach for detecting anomalies in multivariate spacecraft telemetry data from the Soil Moisture Active Passive satellite. We employ three anomaly detection algorithms—One-Class Support Vector Machine, Isolation Forest, and Local Outlier Factor—combined in an ensemble framework to identify both point and contextual anomalies across nine distinct telemetry channels. Our preprocessing pipeline utilises overlapping temporal windows and MiniRocket feature transformation to capture complex temporal patterns in the time series data. Through systematic threshold optimisation focused on maximising recall whilst maintaining precision, our ensemble model achieves an average recall of 0.55 and F1 score of 0.21 across all channels. The ensemble approach demonstrates superior performance compared to individual models, particularly on channels with higher anomaly rates. These results suggest that combining multiple unsupervised techniques can effectively detect spacecraft anomalies without requiring extensive labelled training data.
 
-% The \textbf{} command makes the specified text bold. The \emph{} or
-% \textit{} command are used to italicize text. In general, text is never
-% underlined.
-
-% DON'T FORGET TO MATCH EACH OPEN BRACE WITH A CLOSING BRACE!
 \end{abstract}
-

@@ -1,11 +1,33 @@
+% In this section, you should describe your experimental setup. What
+% were the questions you were trying to answer? What was the
+% experimental setup (number of trials, parameter settings, etc.)? What
+% were you measuring? You should justify these choices when
+% necessary. The accepted wisdom is that there should be enough detail
+% in this section that I could reproduce your work \emph{exactly} if I
+% were so motivated.
+
 
 \section{Experiments}
 \label{sec:expts}
 
-In this section, you should describe your experimental setup. What
-were the questions you were trying to answer? What was the
-experimental setup (number of trials, parameter settings, etc.)? What
-were you measuring? You should justify these choices when
-necessary. The accepted wisdom is that there should be enough detail
-in this section that I could reproduce your work \emph{exactly} if I
-were so motivated.
+In this section, we describe the rationale behind our pipeline design choices and parameter settings. As our models employ unsupervised learning algorithms, no hyperparameter tuning was performed on either the preprocessing steps or the machine learning models (due to training data lacking labels and adjusting parameters using test data would introduce contamination); rather, we justify the structure of our pipeline and the selection of specific parameters based on prior knowledge of the dataset and the characteristics of the telemetry data.
+
+\subsection{Data Processing}
+
+The raw dataset, provided in \texttt{.npy} files, was first filtered to retain only multivariate telemetry anomaly data from the Soil Moisture Active Passive (SMAP) satellite. The data were then transformed into overlapping windows with a window size of 60 timestamps and an overlap of 20 timestamps between consecutive windows, resulting in a NumPy array of shape \texttt{(file\_size, 25, 60)}. This configuration ensures that each window shares 40 timestamps with its neighbours, providing temporal context whilst allowing the model to evaluate the same data points multiple times from different perspectives. For training, testing, and true label data, these matrices were organised by telemetry channel, with files sharing the same channel identifier but differing IDs aggregated together.
+
+In this work, the '\textit{num\_kernels}' parameter of MiniRocket was increased to 20,000 from the default 10,000. Each kernel is a random filter capturing a specific temporal pattern, so using more kernels allows the model to capture a greater diversity of patterns, potentially improving anomaly detection. Given that the overlapping window approach smooths small fluctuations by evaluating the same timestamps multiple times, increasing the number of kernels is expected to reduce variance and enhance robustness without introducing bias or amplifying noise.
+
+Following MiniRocket, feature normalization via z-score scaling was applied. The raw MiniRocket outputs vary widely in scale depending on the original signal, kernel weights, and time series length. Normalization ensures that each feature contributes proportionally, preventing skewed results, which is particularly important as the unsupervised models used in this study — One-Class SVM, Isolation Forest, and LOF — are sensitive to feature scales.
+
+\subsection{One-Class SVM}
+One-Class Support Vector Machine (One-Class SVM) is an unsupervised learning model that identifies instances deviating from the norm by defining a boundary that encapsulates the majority class during training. The hyperparameter '\textit{nu}', representing the upper bound on training outliers, was considered; however, in this paper, the default value was used because the anomaly ratio in the training data was unknown. Tuning the decision boundary without a concrete basis could lead to unreliable results. For prediction, the model’s decision function—the signed distance to the separating hyperplane, positive for inliers and negative for outliers—was retrieved, and percentile-based thresholding was applied to determine anomalies. Thresholds were explored across ranges corresponding to the anomaly rates per channel (1\%–25\%), selecting the one that maximized recall; in cases of multiple candidates, the threshold with higher precision was chosen, as missing true anomalies is generally more costly than incorrectly flagging normal points.
+
+\subsection{Isolation Forest}
+Isolation Forest is an unsupervised learning algorithm that recursively partitions the training data into a tree structure, using the path length from the root to each leaf as a measure of normality. Samples requiring shorter paths are assigned higher anomaly scores. The hyperparameter '\textit{contamination}', representing the expected proportion of outliers, was considered but left at its default value for the same reasons as One-Class SVM. Predictions were produced by retrieving the model’s decision function and applying percentile-based thresholding to classify anomalies.
+
+\subsection{Local Outlier Factor (LOF}
+Local Outlier Factor (LOF) detects anomalies by measuring the local deviation of a sample's density relative to its neighbours. In this study, '\textit{n\_neighbors}' was set to 50 to smooth noise and capture density deviations over a moderate local context. The '\textit{novelty}' parameter was set to true, allowing LOF to train on the dataset and learn a model of "normal" points, enabling prediction on unseen data. Anomaly scores were obtained from the decision function, and percentile-based thresholding was applied to classify anomalies.
+
+\subsection{Ensemble Model}
+After training the individual models — One-Class SVM, Isolation Forest, and LOF — an ensemble model was constructed to combine their predictions. This design leverages the complementary strengths of the three algorithms, each based on different detection mechanisms: One-Class SVM defines the boundary of normal data, Isolation Forest isolates anomalies via recursive partitioning, and LOF measures local density deviations. The ensemble applies a “maximum voting” strategy with a threshold of one vote, flagging a test example as anomalous if any model predicts it as such. This approach prioritizes recall, reducing the likelihood of missing true anomalies, while mitigating consistent misclassification without introducing complex weighting or additional hyperparameters.

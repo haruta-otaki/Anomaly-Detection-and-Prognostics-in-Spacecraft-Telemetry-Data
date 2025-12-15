@@ -21,12 +21,13 @@
 % Association for Artificial Intelligence conference, one of the top
 % AI conferences in the world. You will find that many academic
 % publications in AI use this format.
-\usepackage{aaai}
-\usepackage{times}
-\usepackage{helvet}
-\usepackage{courier}
-\setlength{\pdfpagewidth}{8.5in}
-\setlength{\pdfpageheight}{11in}
+\usepackage{aaai} 
+\usepackage{times} 
+\usepackage{helvet} 
+\usepackage{courier} 
+\usepackage{subcaption} 
+\setlength{\pdfpagewidth}{8.5in} 
+\setlength{\pdfpageheight}{11in} 
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{graphicx}
@@ -40,6 +41,7 @@
 \usepackage{url}
 \usepackage{tablefootnote}
 \usepackage{color}
+\usepackage{booktabs}
 
 \setcounter{secnumdepth}{1}
 \nocopyright
@@ -48,9 +50,9 @@
 % The "\\" is used to break lines. The \url command
 % is useful for typesetting URLs and email addresses (it uses the
 % Courier font).
-\title{Title}
- \author{Christian Rutherford \and Haruta Otaki\\
- \url{{chrutherford, haotaki}@davidson.edu}\\
+\title{Anomaly Detection in Spacecraft Telemetry using NASA SMAP Data}
+ \author{Haruta Otaki \and Christian Rutherford\\
+ \url{{haotaki, chrutherford}@davidson.edu}\\
  Davidson College\\
  Davidson, NC 28035\\
  U.S.A.}
@@ -75,7 +77,6 @@
 \input{background}
 \input{experiments}
 \input{results}
-\input{impacts}
 \input{conclusion}
 \input{contributions}
 \input{ack}
