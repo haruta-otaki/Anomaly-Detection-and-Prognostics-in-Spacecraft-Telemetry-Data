@@ -5,5 +5,4 @@
 !.gitignore
 !README.md
 !model_two.ipynb
-!paper/
-!paper/**
+!paper/writeup.pdf
