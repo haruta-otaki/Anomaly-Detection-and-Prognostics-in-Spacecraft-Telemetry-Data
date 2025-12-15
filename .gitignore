@@ -5,7 +5,5 @@
 !.gitignore
 !README.md
 !model_two.ipynb
-
-# Don't ignore the paper directory and its contents
 !paper/
 !paper/**
